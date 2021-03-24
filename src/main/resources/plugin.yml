@@ -1,0 +1,6 @@
+name: BrakeBlcokArrow
+main: com.github.mixpa.brakeblockarrow.BrakeBlockArrowPlugin
+version: 1.0.0
+commands:
+  BrakeBlockArrow:
+    aliases: [bba]
