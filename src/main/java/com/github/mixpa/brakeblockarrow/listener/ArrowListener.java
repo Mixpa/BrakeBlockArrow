@@ -4,7 +4,10 @@ import com.github.mixpa.brakeblockarrow.arrow.ArrowManager;
 import com.github.mixpa.brakeblockarrow.blocks.BlockManager;
 import com.github.mixpa.brakeblockarrow.blocks.Durability;
 import com.github.mixpa.brakeblockarrow.util.Message;
+import net.minecraft.server.v1_12_R1.EntityArrow;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -53,8 +56,11 @@ public class ArrowListener implements Listener {
         Arrow arrow = (Arrow) event.getEntity();
         Block block = event.getHitBlock();
         if (ArrowManager.arrowExplosionSet.contains(arrow)) {
+
+            EntityArrow entityArrow = ((CraftArrow) arrow).getHandle();
+            Location location = arrow.getLocation();
+            entityArrow.getWorld().createExplosion(entityArrow, location.getX(), location.getY(), location.getZ(), 1.5F, false, true);
             ArrowManager.arrowExplosionSet.remove(arrow);
-            arrow.getWorld().createExplosion(arrow.getLocation(), 1.5F);
         }
         if (ArrowManager.arrowBrakeSet.contains(arrow)) {
             ArrowManager.arrowBrakeSet.remove(arrow);
@@ -71,7 +77,7 @@ public class ArrowListener implements Listener {
                 block.breakNaturally();
             } else {
                 BlockManager.blockDurabilityMap.put(block, durability);
-                ((Player) arrow.getShooter()).sendMessage(Message.message("击中了" + block.getType().name() + " 剩余的耐久度为" + durability.getDurability()));
+                ((Player) arrow.getShooter()).sendMessage(Message.message("击中了" + block.getType().name() + " 剩余的耐久度为" + durability.getDurability() + "/" + durability.getDurabilityMax()));
             }
         }
     }
